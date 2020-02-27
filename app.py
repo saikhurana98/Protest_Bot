@@ -1,22 +1,17 @@
-from flask import Flask, request
-from twilio.twiml.messaging_response import MessagingResponse
+import time
+from webwhatsapi import WhatsAPIDriver
+from webwhatsapi.objects.message import Message
 
-app = Flask(__name__)
+driver = WhatsAPIDriver()
+print("Waiting for QR")
+driver.wait_for_login()
 
-@app.route("/")
-def hello():
-    return "Hello, World!"
+print("Bot started")
 
-@app.route("/data", methods=['POST'])
-def sms_reply():
-    """Respond to incoming calls with a simple text message."""
-    # Fetch the message
-    msg = request.form.get('Body')
-
-    # Create reply
-    resp = MessagingResponse()
-    resp.message(f'You said: {msg}')
-    return str(resp)
-
-if __name__ == "__main__":
-    app.run(debug=True)
+while True:
+    time.sleep(3)
+    print('Checking for more messages')
+    for contact in driver.get_unread():
+        for message in contact.messages:
+            if isinstance(message, Message):  # Currently works for text messages only.
+                contact.chat.send_message(message.content)

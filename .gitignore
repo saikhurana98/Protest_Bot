@@ -1,5 +1,8 @@
 #python venv
-venv/
+whats-venv/
 
 #vscode
 .vscode/
+
+# log files
+*.log
